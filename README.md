@@ -8,11 +8,11 @@
 - lodash
 - less
 - debug
-- TODO: axios
 
 #### 其他库推荐
 
 - rxjs 事件流
+- axios 网络请求
 - joi 输入校验
 
 ### 目录结构
@@ -91,7 +91,7 @@ body { background-image: url(./lib/img/bg.png); }
 
 #### 内部引用
 
-- 不要放入 `lib` 文件夹
+- 将文件放入 `assets` 文件夹
 - 使用 `import`
 
 ```javascript
