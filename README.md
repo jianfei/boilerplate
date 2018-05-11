@@ -20,23 +20,23 @@
 - `app` 入口文件
     - `index.ejs` 默认 html 模板
     - `app.js` 默认入口文件，将导出为 `dist/app.js`
-    - `entry` 可选，多入口，当需要配置多个入口文件时使用
-        - `[ENTRY_NAME]` 单独的入口，文件夹名即为入口名，比如 `home`, `login` 等
-            - `index.ejs` 模板，如果不提供则使用默认模板
-            - `index.js` 入口文件
+    - `entry` 可选，当应用需要配置多个入口时使用
+        - `[ENTRY_NAME]` 每个文件夹为一个入口，名字即为入口名。
+            - `index.ejs` 模板文件，如果不提供则使用默认模板
+            - `index.js` 入口文件，必须
 - `components` 组件库
-    - `vendor` 引入的外部组件，为了方便升级和扩展，都需要在这里包装一层
-- `pages` 单页应用的页面文件
+    - `vendor` 引入的外部组件，为了方便以后升级和扩展，最好在这里包装一层
+- `pages` 页面库
 - `i18n` 国际化
 - `models` 状态管理、数据模型等
-- `services` 服务
+- `services` 服务，如网络请求等
 - `utils` 工具
-    - `appProps` 注入全局 class
-    - `appTitle` 修改应用标题
+    - `appProps` 应用全局 class 管理
+    - `appTitle` 应用标题管理
     - `logger` 日志模块
-- `config` 全局设置
+- `config` 全局设置，存放一些变量
 - `assets` 图片、字体等静态资源
-- `lib` 外部资源，这个文件夹会被整个拷贝到 `dist` 中
+- `lib` 外部资源，这个文件夹打包时会被拷贝到 `dist` 中
 
 ### Webpack 配置
 
@@ -53,7 +53,7 @@
 ### 多入口检测
 
 默认的入口文件是 `src/app/index.js`, HTML 模板文件是 `src/app/index.ejs`
-如果需要多个入口，可以添加一个 `src/app/entry` 文件夹，里面用来存放不同的入口。
+如果需要配置多个入口，可以添加一个 `src/app/entry` 文件夹，里面用来存放不同的入口。
 在这个文件夹下，每个单独的文件夹都会被认为是一个入口，文件夹的名字就是入口名。
 每个入口需要有 `index.js` 入口文件，可以有 `index.ejs` 模板文件，如果没有的话会使用外层的默认模板。
 
@@ -82,7 +82,7 @@ const LoadableComponent = Loadable({
 - 不要使用 `import`, 直接使用资源地址
 
 ```javascript
-<img src='.lib/img/logo.png' />
+<img src='./lib/img/logo.png' />
 ```
 
 ```css
@@ -92,7 +92,7 @@ body { background-image: url(./lib/img/bg.png); }
 #### 内部引用
 
 - 将文件放入 `assets` 文件夹
-- 使用 `import`
+- 使用 `import` 加载资源
 
 ```javascript
 import logo from 'assets/img/logo.png';
@@ -111,9 +111,9 @@ body { background-image: url(~assets/img/bg.png); }
 也可以在 localStorage 中设置 `locale` 键来修改语言，优先级比 url 的低。
 
 文案储存在 `i18n` 目录下，每种语言对应一个文件。
-在代码中直接使用 `i18n(key)` 即可以获得当前语言下对应的文案。可以使用模板。
+在代码中直接使用 `i18n(key)` 即可以获得当前语言下对应的文案。
 
-所有的语言包都是动态加载的，生成在最终目录下的 `i18n` 文件夹中。
+所有的语言包都是动态加载的，生成在 `i18n` 文件夹中。修改语言后会立即生效，不需要刷新页面。
 可以在开发模式下，在 console 中输入 `i18nStats` 来查看文案的引用次数。
 
 ```javascript
