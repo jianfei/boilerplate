@@ -46,6 +46,10 @@ const providePluginInstance = new webpack.ProvidePlugin({
     Loadable: 'react-loadable',
     Mobx: 'mobx',
     MobxReact: 'mobx-react',
+    Rx: 'rxjs/Rx',
+    Transition: 'react-transition-group/Transition',
+    CSSTransition: 'react-transition-group/CSSTransition',
+    TransitionGroup: 'react-transition-group/TransitionGroup',
 
     switcher: 'switch-js',
     classnames: 'classnames',

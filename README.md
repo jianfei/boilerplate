@@ -139,3 +139,19 @@ log('app:demo', 'This is a demo');
 ```
 
 可以在 `utils/logger` 中修改日志的行为。
+
+### rxjs
+
+```javascript
+Rx.Observable.defer(() =>
+    Rx.Observable.fromPromise(axiosRequest),
+).retryWhen(errors => {
+    let lastError;
+
+    return errors
+        .do(error => lastError = error)
+        .delay(secondsOf(3))
+        .take(2)
+        .concat(Rx.Observable.throw(lastError);
+}),
+```
