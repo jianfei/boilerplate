@@ -4,16 +4,13 @@
     - react
     - react-router
     - mobx
-- webpack
 - lodash
+- rxjs
+- webpack
 - less
 - debug
-
-#### 其他库推荐
-
-- rxjs 事件流
-- axios 网络请求
-- joi 输入校验
+- TODO: axios
+- TODO: joi
 
 ### 目录结构
 
@@ -34,6 +31,7 @@
     - `appProps` 应用全局 class 管理
     - `appTitle` 应用标题管理
     - `logger` 日志模块
+    - `rx.ext` rxjs 扩展
 - `config` 全局设置，存放一些变量
 - `assets` 图片、字体等静态资源
 - `lib` 外部资源，这个文件夹打包时会被拷贝到 `dist` 中
@@ -52,9 +50,12 @@
 
 ### 多入口检测
 
-默认的入口文件是 `src/app/index.js`, HTML 模板文件是 `src/app/index.ejs`
+默认的入口文件是 `src/app/index.js`, HTML 模板文件是 `src/app/index.ejs`。
+
 如果需要配置多个入口，可以添加一个 `src/app/entry` 文件夹，里面用来存放不同的入口。
+
 在这个文件夹下，每个单独的文件夹都会被认为是一个入口，文件夹的名字就是入口名。
+
 每个入口需要有 `index.js` 入口文件，可以有 `index.ejs` 模板文件，如果没有的话会使用外层的默认模板。
 
 ### 动态加载机制
@@ -140,7 +141,35 @@ log('app:demo', 'This is a demo');
 
 可以在 `utils/logger` 中修改日志的行为。
 
-### rxjs
+### rxjs 与 react 的结合
+
+#### 生命周期订阅
+
+首先，你需要在组件的 `constructor` 中调用 `Rx.setup()`。然后你可以订阅以下的生命周期流:
+
+- ~~`this.componentWillMount$`~~
+- `this.componentDidMount$`
+- ~~`this.componentWillReceiveProps$`~~
+- `this.getDerivedStateFromProps$`
+- `this.shouldComponentUpdate$`
+- ~~`this.componentWillUpdate$`~~
+- `this.getSnapshotBeforeUpdate$`
+- `this.componentDidUpdate$`
+- `this.componentWillUnmount$`
+- `this.componentDidCatch$`
+
+正常情况下，你还是应该使用生命周期函数。这些事件流主要是用来方便链式调用的。
+比如：
+
+```javascript
+const clock$ = Rx.Observable
+    .interval(3000)
+    .takeUntil(this.componentWillUnmount$);
+```
+
+- TODO: this.setState$
+- TODO: Rx.ComponentEvent(eventName)
+- TODO: Rx.Observable.fromAxios(axiosInstance)
 
 ```javascript
 Rx.Observable.defer(() =>
