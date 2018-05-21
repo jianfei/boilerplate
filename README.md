@@ -2,15 +2,16 @@
 
 - react 全家桶
     - react
-    - react-router
-    - mobx
-- lodash
-- rxjs
+    - react-router 路由
+    - mobx 状态管理
 - webpack
 - less
-- debug
-- TODO: axios
-- TODO: joi
+
+按需引用:
+- lodash 常用工具
+- rxjs 事件流
+- axios 网络请求
+- joi 数据校验
 
 ### 目录结构
 
@@ -144,9 +145,9 @@ localStorage.debug = '*,-sockjs-client*';
 log('app:demo', 'This is a demo');
 ```
 
-可以在 `utils/logger` 中进行定制。
+可以在 `utils/logger` 中进行修改函数，比如上报日志等。
 
-### rxjs 与 react 的结合
+### rxjs 与 react 组件的结合
 
 #### 准备
 
@@ -167,8 +168,7 @@ log('app:demo', 'This is a demo');
 - `this.componentWillUnmount$`
 - `this.componentDidCatch$`
 
-正常情况下，你还是应该使用生命周期函数。这些事件流主要是用来方便链式调用的。
-比如：
+这些事件流主要是用来方便链式调用的。比如：
 
 ```javascript
 const clock$ = Rx.Observable
@@ -183,12 +183,12 @@ this.setState$(Rx.Observable.of({ foo: 'bar' }));
 this.setState$({ foo: Rx.Observable.of('bar') });
 ```
 
-#### 快速指定事件
+#### 事件优化
 
 ```javascript
 <div onClick={this.trigger$('buttonClick')} />
 <div onClick={this.trigger$('buttonClick', 'foo', 'bar')} />
-<div onClick={event => this.trigger$('buttonClick', event, 'foo', 'bar')} />
+<div onClick={event => this.trigger$('buttonClick')(event, 'foo', 'bar')} />
 ```
 
 调用 `this.trigger$` 方法会生成一个 `Rx.Subject` 实例并绑到到 `this` 上。
@@ -197,29 +197,34 @@ this.setState$({ foo: Rx.Observable.of('bar') });
 this.buttonClick$.subscribe(...);
 ```
 
-如果你的组件是延迟加载的，直接调用可能会报错，因为 `this.buttonClick$` 还不存在。
+如果你的组件是延迟加载的，直接调用可能会报错，因为 `this.buttonClick$` 可能还不存在。
 这时可以使用 `this.event$` 来提前声明。
 
 ```javascript
 this.event$('buttonClick').subscribe(...);
 ```
 
-
-
-
-- TODO: Rx.Observable.fromAxios(axiosInstance)
+#### 网络请求优化
 
 ```javascript
-// 延迟重试
-Rx.Observable.defer(() =>
-    Rx.Observable.fromPromise(axiosRequest),
-).retryWhen(errors => {
-    let lastError;
-
-    return errors
-        .do(error => lastError = error)
-        .delay(secondsOf(3))
-        .take(2)
-        .concat(Rx.Observable.throw(lastError);
-}),
+const request$ = Rx.Observable.fromRequest(request, 'foo', 'bar');
 ```
+
+这样做会将 `request('foo', 'bar')` 的结果以事件流返回。
+
+`fromRequest` 和 `fromPromise` 的区别是，`fromPromise` 在进行 retry 时不会再次触发请求，而是直接返回之前的结果。
+
+进行延时重试:
+
+```javascript
+const request$ = Rx.Observable
+    .fromRequest(request, 'foo', 'bar')
+    .delayRetry(3000, 2);
+```
+
+入参：
+
+- `delay`: 每次重试的间隔（毫秒）；默认 `3000`
+- `timesRetry`: 重试次数；默认 `1`
+
+在重试次数到达最大时，会将所有错误信息以数组的形式返回。

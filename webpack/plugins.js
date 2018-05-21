@@ -51,13 +51,14 @@ const providePluginInstance = new webpack.ProvidePlugin({
     CSSTransition: 'react-transition-group/CSSTransition',
     TransitionGroup: 'react-transition-group/TransitionGroup',
 
-    switcher: 'switch-js',
+    axios: 'axios',
     classnames: 'classnames',
-    qs: 'qs',
-    template: 'string-template',
     i18n: ['i18n', 'default'],
-    log: ['utils/logger', 'default'],
     // _: 'lodash', // 按需加载
+    log: ['utils/logger', 'default'],
+    qs: 'qs',
+    switcher: 'switch-js',
+    template: 'string-template',
 });
 const definePluginInstance = new webpack.DefinePlugin({
     IS_DEV: isDevelopment,

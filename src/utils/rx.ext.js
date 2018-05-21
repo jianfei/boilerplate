@@ -3,6 +3,14 @@ Object.assign(Rx, {
     setup: setupReactComponent,
 });
 
+Object.assign(Rx.Observable, {
+    fromRequest,
+});
+
+Object.assign(Rx.Observable.prototype, {
+    delayRetry,
+});
+
 function isObservable(target) {
     if (!target) {
         return false;
@@ -90,7 +98,7 @@ function setupTrigger(context) {
         const event$ = context.event$(eventName);
 
         return (...eventArgs) => {
-            const returnArgs = args.length ? args : eventArgs;
+            const returnArgs = args.concat(eventArgs);
 
             if (returnArgs.length > 1) {
                 return event$.next(returnArgs);
@@ -102,4 +110,26 @@ function setupTrigger(context) {
             return event$.next();
         };
     };
+}
+
+function fromRequest(requestPromise, ...args) {
+    return Rx.Observable.defer(() => Rx.Observable.fromPromise(requestPromise(...args)));
+}
+
+function delayRetry(delay = 3000, timesRetry = 1) {
+    const results = [];
+
+    return this.retryWhen(errors =>
+        errors
+            .mergeMap(error => {
+                results.push(error);
+
+                if (results.length <= timesRetry) {
+                    return Rx.Observable.of(error);
+                }
+
+                return Rx.Observable.throw(results);
+            })
+            .delay(delay),
+    );
 }

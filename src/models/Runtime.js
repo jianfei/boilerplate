@@ -1,5 +1,5 @@
 import _get from 'lodash/get';
-import defaults from 'config/defaults';
+import config from 'config';
 
 const { observable, action } = Mobx;
 
@@ -8,7 +8,7 @@ const localeFromQuery = _get(qs.parse(query), 'locale');
 const localeFromLocalStorage = localStorage.getItem('locale');
 
 export default class Runtime {
-    @observable locale = localeFromQuery || localeFromLocalStorage || defaults.locale;
+    @observable locale = localeFromQuery || localeFromLocalStorage || config.locale;
     @observable i18nTemplates = {};
 
     @action setLocale(locale) {
