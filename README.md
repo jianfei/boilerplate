@@ -135,11 +135,10 @@ i18n('demoWithObjectArgs', { value: 'foo' }); // 传入的值: foo
 ### 日志
 
 ```javascript
-// log(key)(content);
 log('app:demo', 'This is a demo');
 ```
 
-可以在 `utils/logger` 中修改日志的行为。
+可以在 `utils/logger` 中进行定制。
 
 ### rxjs 与 react 的结合
 
@@ -165,6 +164,13 @@ log('app:demo', 'This is a demo');
 const clock$ = Rx.Observable
     .interval(3000)
     .takeUntil(this.componentWillUnmount$);
+```
+
+#### 通过事件流修改 State
+
+```
+this.setState$(Rx.Observable.of({ foo: 'bar' }));
+this.setState$({ foo: Rx.Observable.of('bar') });
 ```
 
 - TODO: this.setState$
