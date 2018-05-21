@@ -18,6 +18,8 @@ function isObservable(target) {
 function setupReactComponent(context) {
     setupLifeCycles(context);
     setupSetState(context);
+    setupEvent(context);
+    setupTrigger(context);
 }
 
 function setupLifeCycles(context) {
@@ -70,5 +72,34 @@ function setupSetState(context) {
                 });
             }
         });
+    };
+}
+
+function setupEvent(context) {
+    context.event$ = eventName => {
+        if (!context[`${eventName}$`]) {
+            context[`${eventName}$`] = new Rx.Subject();
+        }
+
+        return context[`${eventName}$`];
+    };
+}
+
+function setupTrigger(context) {
+    context.trigger$ = (eventName, ...args) => {
+        const event$ = context.event$(eventName);
+
+        return (...eventArgs) => {
+            const returnArgs = args.length ? args : eventArgs;
+
+            if (returnArgs.length > 1) {
+                return event$.next(returnArgs);
+            }
+            else if (returnArgs.length === 1) {
+                return event$.next(returnArgs[0]);
+            }
+
+            return event$.next();
+        };
     };
 }

@@ -134,6 +134,12 @@ i18n('demoWithObjectArgs', { value: 'foo' }); // 传入的值: foo
 
 ### 日志
 
+首先设置一下:
+
+```javascript
+localStorage.debug = '*,-sockjs-client*';
+```
+
 ```javascript
 log('app:demo', 'This is a demo');
 ```
@@ -142,9 +148,13 @@ log('app:demo', 'This is a demo');
 
 ### rxjs 与 react 的结合
 
+#### 准备
+
+首先，你需要在组件的 `constructor` 中调用 `Rx.setup(this)`。
+
 #### 生命周期订阅
 
-首先，你需要在组件的 `constructor` 中调用 `Rx.setup()`。然后你可以订阅以下的生命周期流:
+你可以订阅以下的生命周期流:
 
 - ~~`this.componentWillMount$`~~
 - `this.componentDidMount$`
@@ -168,16 +178,39 @@ const clock$ = Rx.Observable
 
 #### 通过事件流修改 State
 
-```
+```javascript
 this.setState$(Rx.Observable.of({ foo: 'bar' }));
 this.setState$({ foo: Rx.Observable.of('bar') });
 ```
 
-- TODO: this.setState$
-- TODO: Rx.ComponentEvent(eventName)
+#### 快速指定事件
+
+```javascript
+<div onClick={this.trigger$('buttonClick')} />
+<div onClick={this.trigger$('buttonClick', 'foo', 'bar')} />
+<div onClick={event => this.trigger$('buttonClick', event, 'foo', 'bar')} />
+```
+
+调用 `this.trigger$` 方法会生成一个 `Rx.Subject` 实例并绑到到 `this` 上。
+
+```javascript
+this.buttonClick$.subscribe(...);
+```
+
+如果你的组件是延迟加载的，直接调用可能会报错，因为 `this.buttonClick$` 还不存在。
+这时可以使用 `this.event$` 来提前声明。
+
+```javascript
+this.event$('buttonClick').subscribe(...);
+```
+
+
+
+
 - TODO: Rx.Observable.fromAxios(axiosInstance)
 
 ```javascript
+// 延迟重试
 Rx.Observable.defer(() =>
     Rx.Observable.fromPromise(axiosRequest),
 ).retryWhen(errors => {
