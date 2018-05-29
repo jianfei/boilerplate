@@ -15,6 +15,7 @@ module.exports = {
             app: resolve('./src/app'),
             components: resolve('./src/components'),
             config: resolve('./src/config'),
+            extension: resolve('./src/extension'),
             i18n: resolve('./src/i18n'),
             models: resolve('./src/models'),
             pages: resolve('./src/pages'),

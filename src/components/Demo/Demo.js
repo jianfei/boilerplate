@@ -9,7 +9,7 @@ export default class Demo extends React.Component {
 
     render() {
         return (
-            <div className="compo-demo" />
+            <div className="demo" />
         );
     }
 }

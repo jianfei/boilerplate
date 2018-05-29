@@ -3,7 +3,7 @@ import config from 'config';
 
 const { observable, action } = Mobx;
 
-const query = window.location.search.slice(1);
+const query = window.location.search.slice(1) || window.location.hash.split('?')[1];
 const localeFromQuery = _get(qs.parse(query), 'locale');
 const localeFromLocalStorage = localStorage.getItem('locale');
 

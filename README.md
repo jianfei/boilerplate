@@ -23,6 +23,7 @@
             - `index.js` 入口文件，必须
 - `components` 组件库
     - `vendor` 引入的外部组件，为了方便以后升级和扩展，最好在这里包装一层
+- `extension` 扩展
 - `pages` 页面库
 - `i18n` 国际化
 - `models` 状态管理、数据模型等
