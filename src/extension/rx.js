@@ -24,42 +24,9 @@ function isObservable(target) {
 }
 
 function setupReactComponent(context) {
-    setupLifeCycles(context);
     setupSetState(context);
     setupEvent(context);
     setupTrigger(context);
-}
-
-function setupLifeCycles(context) {
-    overwriteLifeCycle(context, 'componentDidMount');
-    overwriteLifeCycle(context, 'shouldComponentUpdate', { returnValue: false });
-    overwriteLifeCycle(context, 'getSnapshotBeforeUpdate', { returnValue: null });
-    overwriteLifeCycle(context, 'componentDidUpdate');
-    overwriteLifeCycle(context, 'componentWillUnmount');
-    overwriteLifeCycle(context, 'componentDidCatch');
-    overwriteLifeCycle(context, 'getDerivedStateFromProps', { isStatic: true, returnValue: null });
-}
-
-function overwriteLifeCycle(context, name, options) {
-    const isStatic = options && options.isStatic;
-    const hasReturnValue = options && typeof options.returnValue !== 'undefined';
-    const defaultLifeCycle = isStatic ? context.constructor[name] : context[name];
-
-    context[`${name}$`] = new Rx.Subject();
-
-    Object.assign(isStatic ? context.constructor : context, {
-        [name]: (...args) => {
-            context[`${name}$`].next(args);
-
-            if (hasReturnValue) {
-                return defaultLifeCycle
-                    ? defaultLifeCycle.call(context, ...args)
-                    : options.returnValue;
-            }
-
-            return defaultLifeCycle && defaultLifeCycle.call(context);
-        },
-    });
 }
 
 function setupSetState(context) {

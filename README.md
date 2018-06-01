@@ -153,29 +153,6 @@ log('app:demo', 'This is a demo');
 
 首先，你需要在组件的 `constructor` 中调用 `Rx.setup(this)`。
 
-#### 生命周期订阅
-
-你可以订阅以下的生命周期流:
-
-- ~~`this.componentWillMount$`~~
-- `this.componentDidMount$`
-- ~~`this.componentWillReceiveProps$`~~
-- `this.getDerivedStateFromProps$`
-- `this.shouldComponentUpdate$`
-- ~~`this.componentWillUpdate$`~~
-- `this.getSnapshotBeforeUpdate$`
-- `this.componentDidUpdate$`
-- `this.componentWillUnmount$`
-- `this.componentDidCatch$`
-
-这些事件流主要是用来方便链式调用的。比如：
-
-```javascript
-const clock$ = Rx.Observable
-    .interval(3000)
-    .takeUntil(this.componentWillUnmount$);
-```
-
 #### 通过事件流修改 State
 
 ```javascript
