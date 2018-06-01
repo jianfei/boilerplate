@@ -12,11 +12,12 @@ function updateTemplates() {
     import(/* webpackChunkName: "i18n/[request]" */ `i18n/${runtime.locale}`)
         .then(({ default: templates }) => {
             log('app:i18n', `加载语言包(${runtime.locale})成功`);
-            runtime.setI18nTemplates(templates);
 
             if (IS_DEV) {
                 window.i18nStats = _mapValues(templates, () => 0);
             }
+
+            runtime.setI18nTemplates(templates);
         });
 }
 
