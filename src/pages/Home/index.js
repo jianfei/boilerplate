@@ -1,3 +1,6 @@
-import Home from './Home';
+import PageLoading from 'pages/Loading';
 
-export default Home;
+export default Loadable({
+    loader: () => import(/* webpackChunkName: "pages/home" */ './Home'),
+    loading: PageLoading,
+});
